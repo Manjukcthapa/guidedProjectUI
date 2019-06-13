@@ -1,18 +1,44 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+import axios from "axios";
+class LogIn extends Component {
+  constructor() {
+    super();
 
-class SignIn extends Component {
+    this.state = {
+      username: "students",
+      password: "hired"
+    };
+  }
+
+  handleChange = e => {
+    let target = e.target;
+    let name = target.name;
+    this.setState({ [name]: target.value });
+  };
+  
+  submitForm = event => {
+    event.preventDefault();
+    const endpoint = "http://localhost:4000/api/auth/login";
+    axios
+      .post(endpoint, this.state)
+      .then(res => {
+        localStorage.setItem('jwt', res.data.token)
+      })
+      .catch(err => {
+        console.error("login error", err);
+      });
+  };
+
   render() {
     return (
       <div>
         <h1>logIn</h1>
-        <form>
+        <form onSubmit={this.submitForm}>
           <input
-            className="inputform"
-            type="username"
             id="username"
+            type="text"
             placeholder="UserName"
-            name="name"
+            name="username"
             value={this.state.username}
             onChange={this.handleChange}
           />
@@ -26,8 +52,14 @@ class SignIn extends Component {
             value={this.state.password}
             onChange={this.handleChange}
           />
+
+          <button className="button1" type="submit">
+            Sign In
+          </button>
         </form>
       </div>
     );
   }
 }
+
+export default LogIn;
